@@ -1,85 +1,66 @@
 package com.example.community_parc.controller;
 
-import com.example.community_parc.domain.Member;
+import com.example.community_parc.dto.CustomUserDetails;
 import com.example.community_parc.dto.JoinRequestDTO;
-import com.example.community_parc.dto.LoginRequestDTO;
+import com.example.community_parc.dto.PwResetDTO;
+import com.example.community_parc.jwt.JwtUtil;
 import com.example.community_parc.service.AuthService;
-import com.example.community_parc.service.MemberService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClient;
 
 @RestController
-@RequestMapping(value = "/auth")
+//@RequestMapping(value = "/auth")
 public class AuthController {
-    private final RestClient.Builder builder;
-    AuthService authService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final AuthService authService;
 
-    public AuthController(RestClient.Builder builder) {
-        this.builder = builder;
+    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, AuthService authService) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+        this.authService = authService;
     }
 
-    @GetMapping("/login") //로그인 뷰페이지
-    public String longin() {
+    @GetMapping("/loginview") //로그인 뷰페이지
+    public String login() {
         return "login.html";
     }
 
-    @PostMapping("/loginProc") //로그인 요청
-    public String login(@RequestBody LoginRequestDTO loginRequestDTO, HttpSession session, HttpServletRequest request) {
-       boolean success = authService.login(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
-        if (success) {
-            session.invalidate(); // 이전 세션 무효화
-            session = request.getSession(true); // 새로운 세션 생성
-            session.setAttribute("email", loginRequestDTO.getEmail());
-            return "로그인 성공";
+
+    //비밀번호 재설정
+    @PostMapping("/pwreset")
+    public ResponseEntity<Void> pwReset(@RequestBody PwResetDTO pwResetDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        try {
+            String email = customUserDetails.getUsername();
+            authService.pwReset(email, pwResetDTO);
+
+            return ResponseEntity.ok().build();
+        }catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
         }
-        return "잘못된 이메일이나 비밀번호 입니다.";
     }
 
-//    @PostMapping("/pwreset")
-//    public String pwReset(HttpSession session) {
-//
-//    }
-
-
-    @GetMapping //로그아웃
-    public ResponseEntity logout(HttpSession session) {
+    //로그아웃
+    @GetMapping("/logout")
+    public ResponseEntity<Void> logout(HttpSession session) {
         session.invalidate();
 
         return ResponseEntity.ok().build();
     }
 
-
-    @GetMapping("/emailexistcheck/{email}") //이메일 중복확인
-    public String emailexistcheck(@PathVariable String email) { //return 타입을 바꿔야할 듯
-
-        if (authService.existemail(email)){
-            return "사용할 수 없는 이메일입니다.";
-        }else return "사용 가능한 이메일입니다.";
-
-    }
-
-    @GetMapping("/nicknameexistcheck/{nickname}") //닉네임 중복 확인
-    public String nicknameexistcheck(@PathVariable String nickname) {
-        if (authService.existusername(nickname)){
-            return "사용할 수 없는 닉네임입니다.";
-        }else return "사용 가능한 닉네임입니다.";
-    }
-
-    @GetMapping("/join")//회원가입 뷰페이지
+    //회원가입 뷰페이지
+    @GetMapping("/join")
     public String join() {
         return "join.html";
     }
 
-    @PostMapping("/joinProc") //회원가입
-    public ResponseEntity<String> join(@RequestBody JoinRequestDTO joinRequestDTO) {
-
-        if (authService.existemail(joinRequestDTO.getEmail())){ //이메일 중복 확인
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일이 이미 존재합니다.");
-        }
+    //회원가입
+    @PostMapping("/joinProc")
+    public ResponseEntity<String> joinProcess(@RequestBody JoinRequestDTO joinRequestDTO) {
 
         authService.join(joinRequestDTO);
 

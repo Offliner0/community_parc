@@ -3,11 +3,12 @@ package com.example.community_parc.domain;
 import com.example.community_parc.dto.JoinRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -24,6 +25,9 @@ public class Member {
 
     @Column(unique = true,nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    private UserRole role = UserRole.USER;
 
     @Column(unique = true, nullable = false)
     private String nickname;
@@ -57,5 +61,10 @@ public class Member {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+    }
+
+    //jwt에서 권한 반환
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.toString())); // 역할을 권한으로 변환
     }
 }

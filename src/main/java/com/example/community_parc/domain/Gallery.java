@@ -30,7 +30,12 @@ public class Gallery {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany
-    @JoinColumn(name = "postId")
+    @OneToMany(mappedBy = "gallery")
     private List<Post> posts;
+
+    public Gallery(String galleryName) {
+        this.galleryName = galleryName;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 }

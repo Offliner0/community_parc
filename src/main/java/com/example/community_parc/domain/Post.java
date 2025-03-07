@@ -27,7 +27,7 @@ public class Post {
 
     private int views;
 
-    private int loginYN;
+    private AuthorType authorType; //MEMBER, GUEST
 
     private String clientIp;
 
@@ -44,14 +44,15 @@ public class Post {
     private String author;
 
     @ManyToOne
+    @JoinColumn(name = "gallery_id", nullable = false)
     private Gallery gallery;
 
     @ManyToOne
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "commentId")
     private List<Comment> comments;
-
 
 }

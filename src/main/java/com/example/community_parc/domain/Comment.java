@@ -1,10 +1,7 @@
 package com.example.community_parc.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 public class Comment {
 
@@ -22,14 +20,19 @@ public class Comment {
 
     private String content;
 
+    private String author;
+
+    private String password;
+
     @Column(columnDefinition = "TINYINT(1)")
     private boolean replyYN;
 
     @Column(columnDefinition = "TINYINT(1)")
     private boolean deleteYN;
 
+    private String clientIP;
 
-    private Long replyNUM; //답글을 단 댓글 번호
+    private Long replyNUM = null; //답글을 단 댓글 번호
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -38,5 +41,10 @@ public class Comment {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    private Post board;
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
 }

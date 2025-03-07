@@ -1,5 +1,6 @@
 package com.example.community_parc.dto;
 
+import com.example.community_parc.domain.AuthorType;
 import com.example.community_parc.domain.Member;
 import com.example.community_parc.domain.Post;
 import lombok.Builder;
@@ -11,13 +12,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class PostGetResponseDTO {
+public class GetPostDetailsResponseDTO {
     private String title;
     private String content;
     private int views;
     private int likes;
     private String author;
-    private int loginYN;
+    private AuthorType authorType;
     private String clientIp;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -25,17 +26,20 @@ public class PostGetResponseDTO {
 
     private Member member;
 
-    public PostGetResponseDTO(Post post) {
-        builder()
+
+    public static GetPostDetailsResponseDTO fromPost(Post post) {
+        return GetPostDetailsResponseDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
                 .views(post.getViews())
                 .likes(post.getLikes())
                 .author(post.getAuthor())
-                .loginYN(post.getLoginYN())
+                .authorType(post.getAuthorType())
                 .clientIp(post.getClientIp())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
+                .member(post.getMember()) // Post에서 member 가져오기
                 .build();
     }
+
 }

@@ -2,6 +2,7 @@ package com.example.community_parc.dto;
 
 import com.example.community_parc.domain.EmailVerified;
 import com.example.community_parc.domain.Member;
+import com.example.community_parc.domain.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class JoinRequestDTO {
                 .emailVerified(EmailVerified.NotVerified)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+                .role(UserRole.USER)
                 .build();
     }
 }

@@ -1,14 +1,10 @@
 package com.example.community_parc.controller;
 
-import com.example.community_parc.domain.Member;
-import com.example.community_parc.dto.CommentResponseDTO;
-import com.example.community_parc.dto.CustomUserDetails;
+import com.example.community_parc.dto.CommentDTO;
 import com.example.community_parc.dto.MyPageDTO;
-import com.example.community_parc.dto.PostResponseDTO;
+import com.example.community_parc.dto.PostDTO;
 import com.example.community_parc.service.MemberService;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,13 +27,13 @@ public class MemberController {
     }
 
     @GetMapping("/mypage/{email}/posting/{page}")
-    public Page<PostResponseDTO> memberPosting(@PathVariable String email, @PathVariable int page) {
+    public Page<PostDTO.Response> memberPosting(@PathVariable String email, @PathVariable int page) {
 
         return memberService.memberPostList(email,page);
     }
 
     @GetMapping("/mypage/{email}/comment/{page}")
-    public Page<CommentResponseDTO> memberComment(@PathVariable String email, @PathVariable int page) {
+    public Page<CommentDTO.Response> memberComment(@PathVariable String email, @PathVariable int page) {
 
         return memberService.memberCommentList(email,page);
     }

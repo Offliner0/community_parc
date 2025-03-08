@@ -1,7 +1,8 @@
 package com.example.community_parc.controller;
 
-import com.example.community_parc.dto.CommentRequestDTO;
-import com.example.community_parc.dto.CommentResponseDTO;
+import com.example.community_parc.dto.CommentDTO;
+import com.example.community_parc.dto.CommentDTO.Request;
+import com.example.community_parc.dto.CommentDTO.Response;
 import com.example.community_parc.dto.CustomUserDetails;
 import com.example.community_parc.dto.GuestCommentRequestDTO;
 import com.example.community_parc.service.CommentService;
@@ -24,16 +25,16 @@ public class CommentController {
 
     //댓글 불러오기
     @GetMapping("/{PostNum}")
-    public List<CommentResponseDTO> getComment(@PathVariable Long postNum){
+    public List<CommentDTO.Response> getComment(@PathVariable Long postNum){
         return  commentService.getCommentsByPostId(postNum);
     }
 
     //회원댓글
     @PostMapping("/{postNum}")
     @PreAuthorize("hasRole(UserRole.USER)")
-    public ResponseEntity<Object> comment(@PathVariable Long postNum, @RequestBody CommentRequestDTO commentRequestDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ResponseEntity<Object> comment(@PathVariable Long postNum, @RequestBody CommentDTO.Request request, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
-        commentService.comment(postNum,customUserDetails.getUsername(),commentRequestDTO);
+        commentService.comment(postNum,customUserDetails.getUsername(),request);
 
         return ResponseEntity.ok().build();
     }
@@ -50,7 +51,7 @@ public class CommentController {
     //회원 댓글 수정
     @PostMapping("/modify/{replyNum}")
     public ResponseEntity<Object> modifyComment(@PathVariable Long replyNum,
-                                                @RequestBody CommentRequestDTO commentRequestDTO,
+                                                @RequestBody CommentDTO.Request commentRequestDTO,
                                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         String email = customUserDetails.getUsername();
 
@@ -63,7 +64,7 @@ public class CommentController {
 
     //비회원 댓글 수정
     @PostMapping("/gusetmodify/{replyNum}")
-    public ResponseEntity<Object> modifyGuestComment(@PathVariable Long replyNum, @RequestBody CommentRequestDTO commentRequestDTO){
+    public ResponseEntity<Object> modifyGuestComment(@PathVariable Long replyNum, @RequestBody CommentDTO.Request commentRequestDTO){
         if (commentService.guestCommentModify(replyNum,commentRequestDTO)) {
             return ResponseEntity.ok().build();
         }
@@ -92,7 +93,7 @@ public class CommentController {
     @PostMapping("/reply/{postNum}/{replyNum}")
     public ResponseEntity<Object> reply(@PathVariable Long postNum,
                                         @PathVariable Long replyNum,
-                                        @RequestBody CommentRequestDTO commentRequestDTO,
+                                        @RequestBody CommentDTO.Request commentRequestDTO,
                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         String email = customUserDetails.getUsername();
 

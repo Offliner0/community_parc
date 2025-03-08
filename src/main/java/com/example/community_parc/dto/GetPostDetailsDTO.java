@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class GetPostDetailsResponseDTO {
+public class GetPostDetailsDTO {
     private String title;
     private String content;
     private int views;
@@ -27,8 +27,8 @@ public class GetPostDetailsResponseDTO {
     private Member member;
 
 
-    public static GetPostDetailsResponseDTO fromPost(Post post) {
-        return GetPostDetailsResponseDTO.builder()
+    public static GetPostDetailsDTO fromPost(Post post) {
+        return GetPostDetailsDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
                 .views(post.getViews())

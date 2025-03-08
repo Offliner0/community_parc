@@ -3,8 +3,9 @@ package com.example.community_parc.service;
 import com.example.community_parc.domain.Comment;
 import com.example.community_parc.domain.Member;
 import com.example.community_parc.domain.Post;
-import com.example.community_parc.dto.CommentRequestDTO;
-import com.example.community_parc.dto.CommentResponseDTO;
+import com.example.community_parc.dto.CommentDTO;
+import com.example.community_parc.dto.CommentDTO.Request;
+import com.example.community_parc.dto.CommentDTO.Response;
 import com.example.community_parc.dto.GuestCommentRequestDTO;
 import com.example.community_parc.repository.CommentRepository;
 import com.example.community_parc.repository.MemberRepository;
@@ -30,26 +31,26 @@ public class CommentService {
     }
 
     //리스트 반환
-    public List<CommentResponseDTO> getCommentsByPostId(Long postId) {
+    public List<CommentDTO.Response> getCommentsByPostId(Long postId) {
         Post post = postRepository.findById(postId).get();
-        List<CommentResponseDTO> commentResponseDTOS = new ArrayList<>();
+        List<CommentDTO.Response> commentResponseDTOS = new ArrayList<>();
         List<Comment> comments = commentRepository.findByPost(post);
 
         //삭제된 댓글은 내용없이 반환
         for (Comment comment : comments) {
 
-            if (comment.isDeleteYN()) commentResponseDTOS.add(CommentResponseDTO.deletedComment(comment));
+            if (comment.isDeleteYN()) commentResponseDTOS.add(CommentDTO.Response.deletedComment(comment));
 
-            else commentResponseDTOS.add(CommentResponseDTO.fromComment(comment));
+            else commentResponseDTOS.add(CommentDTO.Response.fromComment(comment));
         }
         return commentResponseDTOS;
     }
 
     //회원 댓글 등록
-    public void comment(Long postNum, String email, CommentRequestDTO commentRequestDTO) {
+    public void comment(Long postNum, String email, CommentDTO.Request request) {
         Post post = postRepository.findById(postNum).orElseGet(Post::new);
         Member member = memberRepository.findByEmail(email);
-        Comment comment = commentRequestDTO.toComment();
+        Comment comment = request.toComment();
         comment.setMember(member);
         comment.setPost(post);
 
@@ -67,7 +68,7 @@ public class CommentService {
     }
 
     //회원 댓글 수정
-    public boolean commentModify(Long replyNum, String email, CommentRequestDTO commentRequestDTO) {
+    public boolean commentModify(Long replyNum, String email, CommentDTO.Request commentRequestDTO) {
         Comment comment = commentRepository.findById(replyNum).orElseGet(Comment::new);
         Member member = memberRepository.findByEmail(email);
 
@@ -111,7 +112,7 @@ public class CommentService {
     }
 
     //비회원 댓글 수정
-    public boolean guestCommentModify(Long replyNum, CommentRequestDTO commentRequestDTO) {
+    public boolean guestCommentModify(Long replyNum, CommentDTO.Request commentRequestDTO) {
         Comment comment = commentRepository.findById(replyNum).orElseGet(Comment::new);
         if (!comment.isDeleteYN() && Objects.equals(comment.getPassword(), commentRequestDTO.getPassword())) {
             comment.setContent(commentRequestDTO.getContent());
@@ -124,7 +125,7 @@ public class CommentService {
     }
 
     //회원 답글 등록
-    public void reply(Long postNum, Long replyNum,String email, CommentRequestDTO commentRequestDTO) {
+    public void reply(Long postNum, Long replyNum,String email, CommentDTO.Request commentRequestDTO) {
         Post post = postRepository.findById(postNum).orElseGet(Post::new);
         Member member = memberRepository.findByEmail(email);
 

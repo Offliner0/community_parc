@@ -3,10 +3,9 @@ package com.example.community_parc.service;
 import com.example.community_parc.domain.Comment;
 import com.example.community_parc.domain.Member;
 import com.example.community_parc.domain.Post;
-import com.example.community_parc.dto.CommentRequestDTO;
-import com.example.community_parc.dto.CommentResponseDTO;
+import com.example.community_parc.dto.CommentDTO;
 import com.example.community_parc.dto.MyPageDTO;
-import com.example.community_parc.dto.PostResponseDTO;
+import com.example.community_parc.dto.PostDTO;
 import com.example.community_parc.repository.CommentRepository;
 import com.example.community_parc.repository.MemberRepository;
 import com.example.community_parc.repository.PostRepository;
@@ -39,7 +38,7 @@ public class MemberService {
         return myPageDTO;
     }
 
-    public Page<PostResponseDTO> memberPostList(String email , int page){
+    public Page<PostDTO.Response> memberPostList(String email , int page){
 
         int pageLimit = 10; //한 페이지 당 게시글 수
         Pageable pageable = PageRequest.of(page, pageLimit);
@@ -47,11 +46,11 @@ public class MemberService {
 
         Page<Post> posts = postRepository.findByMember(member,pageable);
 
-        return posts.map(PostResponseDTO::fromPost);
+        return posts.map(PostDTO.Response::fromPost);
 
     }
 
-    public Page<CommentResponseDTO> memberCommentList(String email, int page){
+    public Page<CommentDTO.Response> memberCommentList(String email, int page){
 
         int pageLimit = 10; //한 페이지 당 게시글 수
         Pageable pageable = PageRequest.of(page, pageLimit);
@@ -59,7 +58,7 @@ public class MemberService {
 
         Page<Comment> comments = commentRepository.findByMember(member,pageable);
 
-        return comments.map(CommentResponseDTO::fromComment);
+        return comments.map(CommentDTO.Response::fromComment);
     }
 
 

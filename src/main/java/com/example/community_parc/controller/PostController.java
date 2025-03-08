@@ -3,16 +3,12 @@ package com.example.community_parc.controller;
 import com.example.community_parc.dto.*;
 import com.example.community_parc.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,25 +18,25 @@ public class PostController {
 
     //게시글 리스트
     @GetMapping("/{gallery}/board/list/{page}")
-    public Page<PostResponseDTO> getPostList(@PathVariable String gallery, @PathVariable int page) {
+    public Page<PostDTO.Response> getPostList(@PathVariable String gallery, @PathVariable int page) {
 
         return postservice.getPage(gallery,page);
     }
 
     //게시글 상세보기
     @GetMapping("/{gallery}/board/{postNum}")
-    public ResponseEntity<GetPostDetailsResponseDTO> post(@PathVariable String gallery, @PathVariable Long postSeq, HttpServletRequest request) {
-        GetPostDetailsResponseDTO post = postservice.getPost(postSeq,gallery);
+    public ResponseEntity<GetPostDetailsDTO> post(@PathVariable String gallery, @PathVariable Long postSeq, HttpServletRequest request) {
+        GetPostDetailsDTO post = postservice.getPost(postSeq,gallery);
         return ResponseEntity.ok(post);
     }
 
     //회원 게시글 등록
     @PostMapping("/{gallery}/postProc")
     public ResponseEntity<Void> postProc(@PathVariable String gallery,
-                                         @RequestBody PostRequestDTO postRequestDTO,
+                                         @RequestBody PostDTO.Request request,
                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         try {
-            postservice.setMemberPost(postRequestDTO, customUserDetails.getUsername(), gallery);
+            postservice.setMemberPost(request, customUserDetails.getUsername(), gallery);
 
             return ResponseEntity.ok().build();
 
@@ -54,7 +50,7 @@ public class PostController {
     //비회원 게시글 등록
     @PostMapping("/{gallery}/guestPostProc")
     public ResponseEntity<Void> postGuestProc(@PathVariable String gallery,
-                                              @RequestBody PostRequestDTO postRequestDTO,
+                                              @RequestBody PostDTO.Request postRequestDTO,
                                               HttpServletRequest request){
         String clientIp = request.getHeader("X-Forwarded-For");
         postservice.setUnknownPost(postRequestDTO, clientIp, gallery);
@@ -67,11 +63,11 @@ public class PostController {
     public ResponseEntity<Void> modifyPost(
             @PathVariable String gallery,
             @PathVariable Long postSeq,
-            @RequestBody PostEditRequestDTO postRequestDTO,
+            @RequestBody PostDTO.Request Request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
             ){
 
-        if (postservice.modifyPost(postSeq,(String) customUserDetails.getUsername(),postRequestDTO)){
+        if (postservice.modifyPost(postSeq,(String) customUserDetails.getUsername(),Request)){
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();

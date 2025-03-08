@@ -26,42 +26,42 @@ public class PostService {
     private final GalleryRepository galleryRepository;
     private final PostRepository postRepository;
 
-    public List<PostResponseDTO> getPosts(String gallery) {
+    public List<PostDTO.Response> getPosts(String gallery) {
 
         Gallery gallery1 = galleryRepository.findByGalleryName(gallery);
 
-        return postRepository.findByGallery(gallery1).stream().map(PostResponseDTO::fromPost).collect(Collectors.toList());
+        return postRepository.findByGallery(gallery1).stream().map(PostDTO.Response::fromPost).collect(Collectors.toList());
 
     }
 
     //페이지
-    public Page<PostResponseDTO> getPage(String gallery, int page) {
+    public Page<PostDTO.Response> getPage(String gallery, int page) {
         int pageLimit = 10; //한 페이지 당 게시글 수
         Pageable pageable = PageRequest.of(page, pageLimit);
         Gallery gallery1 = galleryRepository.findByGalleryName(gallery);
 
         Page<Post> posts = postRepository.findByGallery(gallery1,pageable);
 
-        return posts.map(PostResponseDTO::fromPost);
+        return posts.map(PostDTO.Response::fromPost);
 
     }
 
     //회원 게시글
-    public void setMemberPost(PostRequestDTO postRequestDTO, String email, String gallery) {
+    public void setMemberPost(PostDTO.Request request, String email, String gallery) {
         Member member = memberRepository.findByEmail(email);
         Gallery galleryObj = galleryRepository.findByGalleryName(gallery);
-        Post post = postRequestDTO.toPost(member,galleryObj);
+        Post post = request.toPost(member,galleryObj);
         postRepository.save(post);
     }
 
     //비회원 게시글
-    public void setUnknownPost(PostRequestDTO postRequestDTO, String clientIp, String gallery) {
+    public void setUnknownPost(PostDTO.Request request, String clientIp, String gallery) {
         Gallery galleryObj = galleryRepository.findByGalleryName(gallery);
         System.out.println(galleryObj.getGalleryId());
         if(galleryObj == null) {
             System.out.println("null gallery");
         }
-        Post post = postRequestDTO.toPost(clientIp,galleryObj);
+        Post post = request.toPost(clientIp,galleryObj);
 
         System.out.println("before save post");
         System.out.println(post.getGallery().getGalleryId());
@@ -70,12 +70,12 @@ public class PostService {
     }
 
     //게시글 상세보기
-    public GetPostDetailsResponseDTO getPost(Long postSeq, String gallery) {
+    public GetPostDetailsDTO getPost(Long postSeq, String gallery) {
         Post post = postRepository.findById(postSeq).orElseThrow(NoSuchElementException::new);
         if (post.getDeleteYN()!=0){
             throw new NoSuchElementException("게시물이 존재하지 않습니다.");//삭제된 게시물 경고 페이지로 이동
         }
-        return GetPostDetailsResponseDTO.fromPost(post);
+        return GetPostDetailsDTO.fromPost(post);
     }
 
     //회원 게시글 삭제
@@ -90,13 +90,13 @@ public class PostService {
     }
 
     //회원 게시글 수정
-    public Boolean modifyPost(Long postSeq, String email, PostEditRequestDTO postEditRequestDTO) {
+    public Boolean modifyPost(Long postSeq, String email, PostDTO.Request request) {
         Member member = memberRepository.findByEmail(email);
         Post post = postRepository.findById(postSeq).orElseThrow(NoSuchElementException::new);
 
         if (post.getDeleteYN()==0 && Objects.equals(post.getMember().getMemberId(), member.getMemberId())){
-            post.setTitle(postEditRequestDTO.getTitle());
-            post.setContent(postEditRequestDTO.getContent());
+            post.setTitle(request.getTitle());
+            post.setContent(request.getContent());
             post.setUpdatedAt(LocalDateTime.now());
             postRepository.save(post);
             return true;

@@ -11,6 +11,6 @@ import java.time.LocalDateTime;
 public class MyPageDTO {
     String nickname;
     LocalDateTime createdAt;
-    Page<PostResponseDTO> myPosts;
-    Page<CommentResponseDTO> myComments;
+    Page<PostDTO.Response> myPosts;
+    Page<CommentDTO.Response> myComments;
 }

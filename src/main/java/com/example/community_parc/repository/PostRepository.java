@@ -1,6 +1,7 @@
 package com.example.community_parc.repository;
 
 import com.example.community_parc.domain.Gallery;
+import com.example.community_parc.domain.Member;
 import com.example.community_parc.domain.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,4 +14,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByGallery(Gallery gallery);
 
     Page<Post> findByGallery(Gallery gallery, Pageable pageable);
+
+    Page<Post> findByMember(Member member, Pageable pageable);
 }

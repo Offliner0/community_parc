@@ -110,6 +110,7 @@ public class CommentService {
         return false;
     }
 
+    //비회원 댓글 수정
     public boolean guestCommentModify(Long replyNum, CommentRequestDTO commentRequestDTO) {
         Comment comment = commentRepository.findById(replyNum).orElseGet(Comment::new);
         if (!comment.isDeleteYN() && Objects.equals(comment.getPassword(), commentRequestDTO.getPassword())) {
@@ -122,6 +123,7 @@ public class CommentService {
         return false;
     }
 
+    //회원 답글 등록
     public void reply(Long postNum, Long replyNum,String email, CommentRequestDTO commentRequestDTO) {
         Post post = postRepository.findById(postNum).orElseGet(Post::new);
         Member member = memberRepository.findByEmail(email);
@@ -134,6 +136,7 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
+    //비회원 답글 등록
     public void guestReply(Long postNum, Long replyNum, GuestCommentRequestDTO commentRequestDTO) {
         Post post = postRepository.findById(postNum).orElseGet(Post::new);
 

@@ -36,9 +36,6 @@ public class AuthService {
         return memberRepository.existsByEmail(email);
     }
 
-    //닉네임 중복 확인
-    public Boolean existusername(String username) { return memberRepository.existsByNickname(username);}
-
     //비밀번호 재설정
     public boolean pwReset(String email ,@RequestBody PwResetDTO pwResetDTO) {
 
@@ -54,17 +51,6 @@ public class AuthService {
 
         return false;
     }
-
-//    //로그인 메서드
-//    public Boolean login(String email, String password) {
-//        Member member = memberRepository.findByEmail(email);
-//
-//        return member != null && passwordEncoder.matches(password, member.getPassword());
-//    }
-
-//    public void logout(HttpSession session) {
-//        session.invalidate();
-//    }
 
     //회원가입 메서드
     public void join(JoinRequestDTO joinRequestDTO) {

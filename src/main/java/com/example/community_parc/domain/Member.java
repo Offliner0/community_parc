@@ -44,12 +44,10 @@ public class Member {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany
-    @JoinColumn(name = "commentId")
+    @OneToMany(mappedBy = "member")
     private List<Comment> comments;
 
-    @OneToMany
-    @JoinColumn(name = "postStorageId")
+    @OneToMany(mappedBy = "member")
     private List<PostStorage> boardStorages;
 
     public Member(JoinRequestDTO joinRequestDTO) {

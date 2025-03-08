@@ -101,6 +101,7 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
+    //비회원 답글
     @PostMapping("/guestreply/{postNum}/{replyNum}")
     public ResponseEntity<Object> guestReply(@PathVariable Long postNum,
                                              @PathVariable Long replyNum,

@@ -19,8 +19,10 @@ public class PostStorage {
     private Long BoardStorageId;
 
     @ManyToOne
-    private Post Board;
+    @JoinColumn(name = "postId")
+    private Post post;
 
     @ManyToOne
+    @JoinColumn(name = "member_id")
     private Member Member;
 }

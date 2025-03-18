@@ -1,6 +1,7 @@
 package com.example.community_parc.service;
 
 import com.example.community_parc.domain.Comment;
+import com.example.community_parc.domain.Gallery;
 import com.example.community_parc.domain.Member;
 import com.example.community_parc.domain.Post;
 import com.example.community_parc.dto.CommentRequestDTO;
@@ -9,12 +10,17 @@ import com.example.community_parc.dto.GuestCommentRequestDTO;
 import com.example.community_parc.repository.CommentRepository;
 import com.example.community_parc.repository.MemberRepository;
 import com.example.community_parc.repository.PostRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -30,19 +36,15 @@ public class CommentService {
     }
 
     //리스트 반환
-    public List<CommentResponseDTO> getCommentsByPostId(Long postId) {
+    public Page<CommentResponseDTO> getComments(Long postId,int page) {
+        int pageLimit = 10; //한 페이지 당 게시글 수
+        //if (page < 1)
+        Pageable pageable = PageRequest.of(page-1, pageLimit);
+
         Post post = postRepository.findById(postId).get();
-        List<CommentResponseDTO> commentResponseDTOS = new ArrayList<>();
-        List<Comment> comments = commentRepository.findByPost(post);
+        Page<Comment> comments = commentRepository.findByPost(post,pageable);
 
-        //삭제된 댓글은 내용없이 반환
-        for (Comment comment : comments) {
-
-            if (comment.isDeleteYN()) commentResponseDTOS.add(CommentResponseDTO.deletedComment(comment));
-
-            else commentResponseDTOS.add(CommentResponseDTO.fromComment(comment));
-        }
-        return commentResponseDTOS;
+        return comments.map(CommentResponseDTO::fromComment);
     }
 
     //회원 댓글 등록
@@ -50,6 +52,7 @@ public class CommentService {
         Post post = postRepository.findById(postNum).orElseGet(Post::new);
         Member member = memberRepository.findByEmail(email);
         Comment comment = commentRequestDTO.toComment();
+        comment.setAuthor(member.getNickname());
         comment.setMember(member);
         comment.setPost(post);
 
@@ -57,10 +60,10 @@ public class CommentService {
     }
 
     //비회원 댓글 등록
-    public void guestComment(Long postnNum, GuestCommentRequestDTO gusetCommentRequestDTO) {
-        Post post = postRepository.findById(postnNum).orElseGet(Post::new);//나중에 수정
+    public void guestComment(Long postNum, GuestCommentRequestDTO guestCommentRequestDTO) {
+        Post post = postRepository.findById(postNum).orElseGet(Post::new);//나중에 수정
 
-        Comment comment = gusetCommentRequestDTO.toComment();
+        Comment comment = guestCommentRequestDTO.toComment();
         comment.setPost(post);
 
         commentRepository.save(comment);
@@ -78,7 +81,6 @@ public class CommentService {
             commentRepository.save(comment);
             return true;
         }
-
         return false;
     }
 

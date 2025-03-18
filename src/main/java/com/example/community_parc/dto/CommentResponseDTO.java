@@ -1,18 +1,18 @@
 package com.example.community_parc.dto;
 
 import com.example.community_parc.domain.Comment;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentResponseDTO {
     private Long commentId;
-    private String content;
+    private String content="test";
     private String author;
     private String clientIP;
     private boolean deletedYN;
@@ -30,15 +30,16 @@ public class CommentResponseDTO {
     }
 
     public static CommentResponseDTO fromComment(Comment comment) {
-        return builder()
+
+        return builder() // 빌더 패턴 사용
                 .commentId(comment.getCommentId())
-                .content(comment.getContent())
-                .author(comment.getAuthor())
-                .clientIP(comment.getClientIP())
-                .deletedYN(false)
+                .author(comment.isDeleteYN() ? null : comment.getAuthor())
+                .clientIP(comment.isDeleteYN() ? null : comment.getClientIP())
+                .deletedYN(comment.isDeleteYN()) // 삭제 여부 설정
                 .replyNum(comment.getReplyNUM())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
+                .content(comment.isDeleteYN() ? "삭제된 댓글입니다." : comment.getContent()) // content 설정
                 .build();
     }
 }

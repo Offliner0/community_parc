@@ -24,8 +24,8 @@ public class MemberController {
     public MyPageDTO myPage(@PathVariable String email) {
 
         MyPageDTO myPageDTO = memberService.myPage(email);
-        myPageDTO.setMyPosts(memberService.memberPostList(email,1));
-        myPageDTO.setMyComments(memberService.memberCommentList(email,1));
+        myPageDTO.setMyPosts(memberService.memberPostList(email,0));
+        myPageDTO.setMyComments(memberService.memberCommentList(email,0));
 
         return myPageDTO;
     }

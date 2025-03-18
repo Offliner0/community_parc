@@ -48,7 +48,7 @@ public class Post {
     private Gallery gallery;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "memberId")
     private Member member;
 
     @OneToMany(cascade = CascadeType.ALL)

@@ -5,12 +5,10 @@ import com.example.community_parc.dto.CommentResponseDTO;
 import com.example.community_parc.dto.CustomUserDetails;
 import com.example.community_parc.dto.GuestCommentRequestDTO;
 import com.example.community_parc.service.CommentService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/comment")
@@ -23,14 +21,13 @@ public class CommentController {
     }
 
     //댓글 불러오기
-    @GetMapping("/{PostNum}")
-    public List<CommentResponseDTO> getComment(@PathVariable Long postNum){
-        return  commentService.getCommentsByPostId(postNum);
+    @GetMapping("/{postNum}/{commentPage}")
+    public Page<CommentResponseDTO> getComment(@PathVariable Long postNum,@PathVariable int commentPage){
+        return  commentService.getComments(postNum, commentPage);
     }
 
-    //회원댓글
+    //회원 댓글
     @PostMapping("/{postNum}")
-    @PreAuthorize("hasRole(UserRole.USER)")
     public ResponseEntity<Object> comment(@PathVariable Long postNum, @RequestBody CommentRequestDTO commentRequestDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
         commentService.comment(postNum,customUserDetails.getUsername(),commentRequestDTO);

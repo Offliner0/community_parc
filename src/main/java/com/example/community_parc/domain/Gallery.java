@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -18,8 +19,8 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class Gallery {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long galleryId;
+    @Id
+    private UUID id;
 
     @Column(nullable = false)
     private String galleryName;

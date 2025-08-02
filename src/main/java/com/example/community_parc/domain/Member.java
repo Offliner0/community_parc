@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -20,8 +21,8 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class Member {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberId;
+    @Id
+    private UUID id;
 
     @Column(unique = true,nullable = false)
     private String email;

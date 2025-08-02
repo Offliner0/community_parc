@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
@@ -15,12 +17,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class PostStorage {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long BoardStorageId;
+    @Id
+    private UUID id;
 
     @ManyToOne
-    private Post Board;
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     @ManyToOne
-    private Member Member;
+    @JoinColumn(name = "member_id")
+    private Member member;
 }

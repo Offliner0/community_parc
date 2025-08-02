@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -15,8 +16,8 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class Comment {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long commentId;
+    @Id
+    private UUID id;
 
     private String content;
 

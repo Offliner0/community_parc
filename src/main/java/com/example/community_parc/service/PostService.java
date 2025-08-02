@@ -57,14 +57,14 @@ public class PostService {
     //비회원 게시글
     public void setUnknownPost(PostDTO.Request request, String clientIp, String gallery) {
         Gallery galleryObj = galleryRepository.findByGalleryName(gallery);
-        System.out.println(galleryObj.getGalleryId());
+        System.out.println(galleryObj.getId());
         if(galleryObj == null) {
             System.out.println("null gallery");
         }
         Post post = request.toPost(clientIp,galleryObj);
 
         System.out.println("before save post");
-        System.out.println(post.getGallery().getGalleryId());
+        System.out.println(post.getGallery().getId());
 
         postRepository.save(post);
     }
@@ -82,7 +82,7 @@ public class PostService {
     public void deleteMemberPost(Long postSeq, String email) {
         Member member = memberRepository.findByEmail(email);
         Post post = postRepository.findById(postSeq).orElseThrow(()->new NoSuchElementException("잘못된 접근입니다."));
-        if (post.getDeleteYN() == 0 && Objects.equals(post.getMember().getMemberId(), member.getMemberId())){
+        if (post.getDeleteYN() == 0 && Objects.equals(post.getMember().getId(), member.getId())){
             post.setDeleteYN(1);
             post.setUpdatedAt(LocalDateTime.now());
             postRepository.save(post);
@@ -94,7 +94,7 @@ public class PostService {
         Member member = memberRepository.findByEmail(email);
         Post post = postRepository.findById(postSeq).orElseThrow(NoSuchElementException::new);
 
-        if (post.getDeleteYN()==0 && Objects.equals(post.getMember().getMemberId(), member.getMemberId())){
+        if (post.getDeleteYN()==0 && Objects.equals(post.getMember().getId(), member.getId())){
             post.setTitle(request.getTitle());
             post.setContent(request.getContent());
             post.setUpdatedAt(LocalDateTime.now());

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -16,8 +17,8 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class Post {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    @Id
+    private UUID id;
 
     private String title;
 
@@ -52,7 +53,7 @@ public class Post {
     private Member member;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "commentId")
+    @JoinColumn(name = "comment_id")
     private List<Comment> comments;
 
 }

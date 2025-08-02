@@ -39,6 +39,8 @@ public class Member {
     @Column(nullable = false)
     private EmailVerified emailVerified;
 
+    private String authenticationKey;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -48,8 +50,8 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "member")
-    private List<PostStorage> boardStorages;
+//    @OneToMany(mappedBy = "member")
+//    private List<PostStorage> boardStorages;
 
     public Member(JoinRequestDTO joinRequestDTO) {
         Member.builder()

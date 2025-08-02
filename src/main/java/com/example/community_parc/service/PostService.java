@@ -37,7 +37,8 @@ public class PostService {
     //페이지
     public Page<PostDTO.Response> getPage(String gallery, int page) {
         int pageLimit = 10; //한 페이지 당 게시글 수
-        Pageable pageable = PageRequest.of(page, pageLimit);
+        //if (page < 1)
+        Pageable pageable = PageRequest.of(page-1, pageLimit);
         Gallery gallery1 = galleryRepository.findByGalleryName(gallery);
 
         Page<Post> posts = postRepository.findByGallery(gallery1,pageable);

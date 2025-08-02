@@ -42,10 +42,10 @@ public class Comment {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "memberId")
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "postId")
     private Post post;
 }

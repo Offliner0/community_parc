@@ -15,21 +15,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 //@RequestMapping(value = "/auth")
 public class AuthController {
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
     private final AuthService authService;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, AuthService authService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
+    public AuthController(AuthService authService) {
         this.authService = authService;
     }
-
-    @GetMapping("/loginview") //로그인 뷰페이지
-    public String login() {
-        return "login.html";
-    }
-
 
     //비밀번호 재설정
     @PostMapping("/pwreset")
@@ -39,7 +29,7 @@ public class AuthController {
             authService.pwReset(email, pwResetDTO);
 
             return ResponseEntity.ok().build();
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -52,12 +42,6 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    //회원가입 뷰페이지
-    @GetMapping("/join")
-    public String join() {
-        return "join.html";
-    }
-
     //회원가입
     @PostMapping("/joinProc")
     public ResponseEntity<String> joinProcess(@RequestBody JoinRequestDTO joinRequestDTO) {
@@ -67,6 +51,11 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 완료");
     }
 
+    //이메일 인증
+    @GetMapping("/emailAuth/{code}")
+    public ResponseEntity<Boolean> emailAuthentication(@PathVariable String code) {
 
+        return ResponseEntity.ok(authService.emailAuthentication(code));
 
+    }
 }

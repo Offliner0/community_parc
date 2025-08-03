@@ -1,25 +1,17 @@
 package com.example.community_parc.service;
 
 import com.example.community_parc.domain.Member;
-import com.example.community_parc.dto.CustomUserDetails;
 import com.example.community_parc.dto.JoinRequestDTO;
 import com.example.community_parc.dto.PwResetDTO;
+import com.example.community_parc.exception.MailSendingException;
 import com.example.community_parc.repository.MemberRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.servlet.http.HttpSession;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.thymeleaf.standard.expression.MessageExpression;
 
 import java.util.UUID;
 
@@ -87,7 +79,7 @@ public class AuthService {
             message.setText(body,"UTF-8","html");
 
         }catch (MessagingException e) {
-            e.printStackTrace();
+            new MailSendingException.MailSendingFailedException();
         }
     }
 

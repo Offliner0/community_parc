@@ -4,8 +4,6 @@ import com.example.community_parc.domain.Comment;
 import com.example.community_parc.domain.Member;
 import com.example.community_parc.domain.Post;
 import com.example.community_parc.dto.CommentDTO;
-import com.example.community_parc.dto.CommentDTO.Request;
-import com.example.community_parc.dto.CommentDTO.Response;
 import com.example.community_parc.dto.GuestCommentRequestDTO;
 import com.example.community_parc.repository.CommentRepository;
 import com.example.community_parc.repository.MemberRepository;
@@ -30,7 +28,7 @@ public class CommentService {
         this.memberRepository = memberRepository;
     }
 
-    //리스트 반환
+    //댓글 반환
     public List<CommentDTO.Response> getCommentsByPostId(Long postId) {
         Post post = postRepository.findById(postId).get();
         List<CommentDTO.Response> commentResponseDTOS = new ArrayList<>();

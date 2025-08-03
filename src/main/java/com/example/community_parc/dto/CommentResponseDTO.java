@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Builder
 public class CommentResponseDTO {
-    private Long commentId;
+    private UUID commentId;
     private String content;
     private String author;
     private String clientIP;
@@ -31,7 +32,7 @@ public class CommentResponseDTO {
 
     public static CommentResponseDTO fromComment(Comment comment) {
         return builder()
-                .commentId(comment.getCommentId())
+                .commentId(comment.getId())
                 .content(comment.getContent())
                 .author(comment.getAuthor())
                 .clientIP(comment.getClientIP())

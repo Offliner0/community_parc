@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.apache.coyote.Response;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class PostDTO {
 
@@ -27,6 +28,7 @@ public class PostDTO {
 
         public Post toPost(Member member, Gallery gallery) { //회원 게시글
             return Post.builder()
+                    .id(UUID.randomUUID())
                     .title(this.getTitle())
                     .content(this.getContent())
                     .deleteYN(0)
@@ -42,6 +44,7 @@ public class PostDTO {
 
         public Post toPost(String clientIp, Gallery gallery) { //비회원 게시글
             return Post.builder()
+                    .id(UUID.randomUUID())
                     .title(this.getTitle())
                     .content(this.getContent())
                     .deleteYN(0)

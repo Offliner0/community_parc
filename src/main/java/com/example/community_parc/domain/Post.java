@@ -28,6 +28,7 @@ public class Post {
 
     private int views;
 
+
     private AuthorType authorType; //MEMBER, GUEST
 
     private String clientIp;

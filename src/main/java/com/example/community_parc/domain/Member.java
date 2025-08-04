@@ -55,6 +55,7 @@ public class Member {
 
     public Member(JoinRequestDTO joinRequestDTO) {
         Member.builder()
+                .id(UUID.randomUUID())
                 .email(joinRequestDTO.getEmail())
                 .password(joinRequestDTO.getPassword())
                 .nickname(joinRequestDTO.getNickname())

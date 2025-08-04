@@ -35,6 +35,7 @@ public class Gallery {
     private List<Post> posts;
 
     public Gallery(String galleryName) {
+        this.id = UUID.randomUUID();
         this.galleryName = galleryName;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();

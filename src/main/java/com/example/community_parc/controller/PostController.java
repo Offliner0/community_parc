@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class PostController {
@@ -21,6 +23,11 @@ public class PostController {
     public Page<PostDTO.Response> getPostList(@PathVariable String gallery, @PathVariable int page) {
 
         return postservice.getPage(gallery,page);
+    }
+    @GetMapping("/{gallery}/board/list/mk2/{page}")
+    public List<PostPaginationDto> getPostpage(@PathVariable String gallery, @PathVariable int page) {
+
+        return postservice.getPostPagination(gallery,page,10);
     }
 
     //게시글 상세보기

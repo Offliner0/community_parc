@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,6 +46,18 @@ public class PostService {
 
         return posts.map(PostDTO.Response::fromPost);
 
+    }
+
+    //페이지 mk2
+    //커버링인덱스를 이용하여 페이징을 구현함
+    //1000만건의 데이터에서 페이지당 10개, 10000번째 페이지를 요청했을때 기존 = 500ms, 커버링 인덱스 = 50ms 가량의 응답속도가 나온다.
+    //gallery_id를 불러오는 방식을 개선하면 더 단축할 수 있을 것 같다.
+    //댓글도 같은 방식으로 해보자
+    public List<PostPaginationDto> getPostPagination(String gallery, int pageNo, int pageSize) {
+        pageNo = Math.max(pageNo, 1);
+        UUID galleryId = galleryRepository.findByGalleryName(gallery).getId();
+        List<PostPaginationDto> page = postRepository.customFindAll(galleryId, pageNo-1, pageSize);
+        return page;
     }
 
     //회원 게시글

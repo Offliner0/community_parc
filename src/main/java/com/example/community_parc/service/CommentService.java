@@ -4,18 +4,18 @@ import com.example.community_parc.domain.Comment;
 import com.example.community_parc.domain.Member;
 import com.example.community_parc.domain.Post;
 import com.example.community_parc.dto.CommentDTO;
-import com.example.community_parc.dto.CommentDTO.Request;
-import com.example.community_parc.dto.CommentDTO.Response;
+import com.example.community_parc.dto.CommentPainationDto;
 import com.example.community_parc.dto.GuestCommentRequestDTO;
-import com.example.community_parc.repository.CommentRepository;
+import com.example.community_parc.repository.comment.CommentRepository;
 import com.example.community_parc.repository.MemberRepository;
-import com.example.community_parc.repository.PostRepository;
+import com.example.community_parc.repository.post.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class CommentService {
@@ -31,13 +31,12 @@ public class CommentService {
     }
 
     //리스트 반환
-    public List<CommentDTO.Response> getCommentsByPostId(Long postId) {
-        Post post = postRepository.findById(postId).get();
+    public List<CommentDTO.Response> getCommentsByPostId(UUID postId) {
         List<CommentDTO.Response> commentResponseDTOS = new ArrayList<>();
-        List<Comment> comments = commentRepository.findByPost(post);
+        List<CommentPainationDto> comments = commentRepository.commentPainations(postId,10,10);
 
         //삭제된 댓글은 내용없이 반환
-        for (Comment comment : comments) {
+        for (CommentPainationDto comment : comments) {
 
             if (comment.isDeleteYN()) commentResponseDTOS.add(CommentDTO.Response.deletedComment(comment));
 
@@ -47,7 +46,7 @@ public class CommentService {
     }
 
     //회원 댓글 등록
-    public void comment(Long postNum, String email, CommentDTO.Request request) {
+    public void comment(UUID postNum, String email, CommentDTO.Request request) {
         Post post = postRepository.findById(postNum).orElseGet(Post::new);
         Member member = memberRepository.findByEmail(email);
         Comment comment = request.toComment();
@@ -58,7 +57,7 @@ public class CommentService {
     }
 
     //비회원 댓글 등록
-    public void guestComment(Long postnNum, GuestCommentRequestDTO gusetCommentRequestDTO) {
+    public void guestComment(UUID postnNum, GuestCommentRequestDTO gusetCommentRequestDTO) {
         Post post = postRepository.findById(postnNum).orElseGet(Post::new);//나중에 수정
 
         Comment comment = gusetCommentRequestDTO.toComment();
@@ -68,7 +67,7 @@ public class CommentService {
     }
 
     //회원 댓글 수정
-    public boolean commentModify(Long replyNum, String email, CommentDTO.Request commentRequestDTO) {
+    public boolean commentModify(UUID replyNum, String email, CommentDTO.Request commentRequestDTO) {
         Comment comment = commentRepository.findById(replyNum).orElseGet(Comment::new);
         Member member = memberRepository.findByEmail(email);
 
@@ -84,7 +83,7 @@ public class CommentService {
     }
 
     //회원 댓글 삭제
-    public boolean commentDelete(Long replyNum, String email) {
+    public boolean commentDelete(UUID replyNum, String email) {
         Comment comment = commentRepository.findById(replyNum).orElseGet(Comment::new);
         Member member = memberRepository.findByEmail(email);
         if (!comment.isDeleteYN() && Objects.equals(member.getEmail(), email)) {
@@ -98,7 +97,7 @@ public class CommentService {
     }
 
     //비회원 댓글 삭제
-    public boolean guestCommentDelete(Long replyNum, String password) {
+    public boolean guestCommentDelete(UUID replyNum, String password) {
         Comment comment = commentRepository.findById(replyNum).orElseGet(Comment::new);
 
         if (!comment.isDeleteYN() && Objects.equals(comment.getPassword(), password)) {
@@ -112,7 +111,7 @@ public class CommentService {
     }
 
     //비회원 댓글 수정
-    public boolean guestCommentModify(Long replyNum, CommentDTO.Request commentRequestDTO) {
+    public boolean guestCommentModify(UUID replyNum, CommentDTO.Request commentRequestDTO) {
         Comment comment = commentRepository.findById(replyNum).orElseGet(Comment::new);
         if (!comment.isDeleteYN() && Objects.equals(comment.getPassword(), commentRequestDTO.getPassword())) {
             comment.setContent(commentRequestDTO.getContent());
@@ -125,7 +124,7 @@ public class CommentService {
     }
 
     //회원 답글 등록
-    public void reply(Long postNum, Long replyNum,String email, CommentDTO.Request commentRequestDTO) {
+    public void reply(UUID postNum, UUID replyNum,String email, CommentDTO.Request commentRequestDTO) {
         Post post = postRepository.findById(postNum).orElseGet(Post::new);
         Member member = memberRepository.findByEmail(email);
 
@@ -138,7 +137,7 @@ public class CommentService {
     }
 
     //비회원 답글 등록
-    public void guestReply(Long postNum, Long replyNum, GuestCommentRequestDTO commentRequestDTO) {
+    public void guestReply(UUID postNum, UUID replyNum, GuestCommentRequestDTO commentRequestDTO) {
         Post post = postRepository.findById(postNum).orElseGet(Post::new);
 
         Comment comment = commentRequestDTO.toComment(replyNum);

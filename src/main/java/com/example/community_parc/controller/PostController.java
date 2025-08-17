@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class PostController {
 
     //게시글 상세보기
     @GetMapping("/{gallery}/board/{postNum}")
-    public ResponseEntity<GetPostDetailsDTO> post(@PathVariable String gallery, @PathVariable Long postSeq, HttpServletRequest request) {
+    public ResponseEntity<GetPostDetailsDTO> post(@PathVariable String gallery, @PathVariable UUID postSeq, HttpServletRequest request) {
         GetPostDetailsDTO post = postservice.getPost(postSeq,gallery);
         return ResponseEntity.ok(post);
     }
@@ -69,7 +70,7 @@ public class PostController {
     @PostMapping("/board/{gallery}/modify/{postSeq}")
     public ResponseEntity<Void> modifyPost(
             @PathVariable String gallery,
-            @PathVariable Long postSeq,
+            @PathVariable UUID postSeq,
             @RequestBody PostDTO.Request Request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
             ){
@@ -82,7 +83,7 @@ public class PostController {
 
     //비회원 게시글 수정
     @PostMapping("/board/{gallery}/guestmodify/{postSeq}")
-    public ResponseEntity<Void> modifyGuestPost(@PathVariable Long postSeq, @RequestBody GuestPostEditRequestDTO guestPostEditRequestDTO) {
+    public ResponseEntity<Void> modifyGuestPost(@PathVariable UUID postSeq, @RequestBody GuestPostEditRequestDTO guestPostEditRequestDTO) {
         if (postservice.modifyGuestPost(postSeq,guestPostEditRequestDTO)){
             return ResponseEntity.ok().build();
         }
@@ -91,7 +92,7 @@ public class PostController {
 
     //회원 게시글 삭제
     @DeleteMapping("/board/{gallery}/{postSeq}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long postSeq, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ResponseEntity<Void> deletePost(@PathVariable UUID postSeq, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         try {
             postservice.deleteMemberPost(postSeq, customUserDetails.getUsername());
             return ResponseEntity.ok().build(); // 삭제 성공
@@ -102,7 +103,7 @@ public class PostController {
 
     //비회원 게시글 삭제
     @DeleteMapping("/board/{gallery}/guest/{postSeq}")
-    public ResponseEntity<Void> deleteGuestPost(@PathVariable Long postSeq, @RequestBody String password) {
+    public ResponseEntity<Void> deleteGuestPost(@PathVariable UUID postSeq, @RequestBody String password) {
 
         if (postservice.deleteGuestPost(postSeq,password)) {
             return ResponseEntity.ok().build();

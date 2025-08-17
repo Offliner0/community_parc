@@ -35,7 +35,7 @@ public class Comment {
 
     private String clientIP;
 
-    private Long replyNUM = null; //답글을 단 댓글 번호
+    private UUID replyNUM = null; //답글을 단 댓글 번호
 
     @CreatedDate
     @Column(nullable = false)

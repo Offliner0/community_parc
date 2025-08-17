@@ -15,9 +15,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PostPaginationDto {
 
-    private UUID id;
     private String title;
-//    private String nickname; 일단 조인없이
+    private String nickname;
     private AuthorType authorType;
     private String clientIp;
     private LocalDateTime createdAt;

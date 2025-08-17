@@ -6,7 +6,7 @@ import com.example.community_parc.domain.Post;
 import com.example.community_parc.dto.*;
 import com.example.community_parc.repository.GalleryRepository;
 import com.example.community_parc.repository.MemberRepository;
-import com.example.community_parc.repository.PostRepository;
+import com.example.community_parc.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,8 +51,6 @@ public class PostService {
     //페이지 mk2
     //커버링인덱스를 이용하여 페이징을 구현함
     //1000만건의 데이터에서 페이지당 10개, 10000번째 페이지를 요청했을때 기존 = 500ms, 커버링 인덱스 = 50ms 가량의 응답속도가 나온다.
-    //gallery_id를 불러오는 방식을 개선하면 더 단축할 수 있을 것 같다.
-    //댓글도 같은 방식으로 해보자
     public List<PostPaginationDto> getPostPagination(String gallery, int pageNo, int pageSize) {
         pageNo = Math.max(pageNo, 1);
         UUID galleryId = galleryRepository.findByGalleryName(gallery).getId();
@@ -71,20 +69,16 @@ public class PostService {
     //비회원 게시글
     public void setUnknownPost(PostDTO.Request request, String clientIp, String gallery) {
         Gallery galleryObj = galleryRepository.findByGalleryName(gallery);
-        System.out.println(galleryObj.getId());
-        if(galleryObj == null) {
+        if(galleryObj == null || request.getNickname() == null) {
             System.out.println("null gallery");
         }
         Post post = request.toPost(clientIp,galleryObj);
-
-        System.out.println("before save post");
-        System.out.println(post.getGallery().getId());
 
         postRepository.save(post);
     }
 
     //게시글 상세보기
-    public GetPostDetailsDTO getPost(Long postSeq, String gallery) {
+    public GetPostDetailsDTO getPost(UUID postSeq, String gallery) {
         Post post = postRepository.findById(postSeq).orElseThrow(NoSuchElementException::new);
         if (post.getDeleteYN()!=0){
             throw new NoSuchElementException("게시물이 존재하지 않습니다.");//삭제된 게시물 경고 페이지로 이동
@@ -93,7 +87,7 @@ public class PostService {
     }
 
     //회원 게시글 삭제
-    public void deleteMemberPost(Long postSeq, String email) {
+    public void deleteMemberPost(UUID postSeq, String email) {
         Member member = memberRepository.findByEmail(email);
         Post post = postRepository.findById(postSeq).orElseThrow(()->new NoSuchElementException("잘못된 접근입니다."));
         if (post.getDeleteYN() == 0 && Objects.equals(post.getMember().getId(), member.getId())){
@@ -104,7 +98,7 @@ public class PostService {
     }
 
     //회원 게시글 수정
-    public Boolean modifyPost(Long postSeq, String email, PostDTO.Request request) {
+    public Boolean modifyPost(UUID postSeq, String email, PostDTO.Request request) {
         Member member = memberRepository.findByEmail(email);
         Post post = postRepository.findById(postSeq).orElseThrow(NoSuchElementException::new);
 
@@ -119,7 +113,7 @@ public class PostService {
     }
 
     //비회원 게시글 삭제
-    public Boolean deleteGuestPost(Long postSeq, String password) {
+    public Boolean deleteGuestPost(UUID postSeq, String password) {
         Post post = postRepository.findById(postSeq).orElseThrow(NoSuchElementException::new);
 
         if (post.getDeleteYN() == 0 && Objects.equals(post.getPassword(), password)){
@@ -132,7 +126,7 @@ public class PostService {
     }
 
     //비회원 게시글 수정
-    public Boolean modifyGuestPost(Long postSeq, GuestPostEditRequestDTO guestPostEditRequestDTO) {
+    public Boolean modifyGuestPost(UUID postSeq, GuestPostEditRequestDTO guestPostEditRequestDTO) {
         Post post = postRepository.findById(postSeq).orElseThrow(NoSuchElementException::new);
 
         if (post.getDeleteYN() == 0 && Objects.equals(post.getPassword(), guestPostEditRequestDTO.getPassword())){

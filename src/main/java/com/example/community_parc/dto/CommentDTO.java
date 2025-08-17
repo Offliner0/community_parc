@@ -25,7 +25,7 @@ public class CommentDTO {
                     .build();
         }
 
-        public Comment toComment(Long replyNum) {
+        public Comment toComment(UUID replyNum) {
             return Comment.builder()
                     .content(this.content)
                     .replyNUM(replyNum)
@@ -39,32 +39,30 @@ public class CommentDTO {
     @Setter
     @Builder
     public static class Response {
-        private UUID commentId;
         private String content;
         private String author;
         private String clientIP;
         private boolean deletedYN;
-        private Long replyNum;
+        private UUID replyNum;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 
-        public static Response deletedComment(Comment comment) {
+        public static Response deletedComment(CommentPainationDto comment) {
             return builder()
                     .deletedYN(true)
-                    .replyNum(comment.getReplyNUM())
+                    .replyNum(comment.getReplyNum())
                     .createdAt(comment.getCreatedAt())
                     .updatedAt(comment.getUpdatedAt())
                     .build();
         }
 
-        public static Response fromComment(Comment comment) {
+        public static Response fromComment(CommentPainationDto comment) {
             return builder()
-                    .commentId(comment.getId())
                     .content(comment.getContent())
                     .author(comment.getAuthor())
                     .clientIP(comment.getClientIP())
                     .deletedYN(false)
-                    .replyNum(comment.getReplyNUM())
+                    .replyNum(comment.getReplyNum())
                     .createdAt(comment.getCreatedAt())
                     .updatedAt(comment.getUpdatedAt())
                     .build();

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -29,7 +30,7 @@ public class GuestCommentRequestDTO {
                 .build();
     }
 
-    public Comment toComment(Long replyNum) {
+    public Comment toComment(UUID replyNum) {
         return Comment.builder()
                 .content(this.content)
                 .author(this.author)

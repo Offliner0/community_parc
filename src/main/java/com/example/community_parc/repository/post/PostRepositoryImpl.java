@@ -1,15 +1,10 @@
-package com.example.community_parc.repository;
+package com.example.community_parc.repository.post;
 
-import com.example.community_parc.domain.Gallery;
-import com.example.community_parc.domain.Post;
 import com.example.community_parc.domain.QPost;
-import com.example.community_parc.dto.PostDTO;
 import com.example.community_parc.dto.PostPaginationDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
@@ -42,8 +37,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
         return queryFactory
                 .select(Projections.fields(PostPaginationDto.class,
-                        post.id,
                         post.title,
+                        post.author,
                         post.author,
                         post.clientIp,
                         post.createdAt,
@@ -53,8 +48,5 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .where(post.id.in(ids))
                 .orderBy(post.createdAt.desc())
                 .fetch();
-                //조인해서 닉네임도 가져오려면 어떻게 해야될까?
-                //memberid가져와서 닉네임따면될듯..?
-                // 근데 비회원이랑 회원이랑 같이 있는데 어케함?
     }
 }
